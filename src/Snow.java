@@ -29,10 +29,6 @@ import static com.jogamp.opengl.GL2ES3.*;
 public class Snow {
 	private interface Buffer {
 
-		int VERTEX = 0;
-		int ELEMENT = 1;
-		int GLOBAL_MATRICES = 2;
-		int MODEL_MATRIX = 3;
 		int MAX = 4;
 	}
 
@@ -40,7 +36,7 @@ public class Snow {
 	 * Created by GBarbieri on 16.03.2017.
 	 * 
 	 * Program heavily modified by Jerry Heuring in September 2021. Most
-	 * modifications stripped out code that was not yet needed reorganized the
+	 * modifications stripped out code that was not yet needed, reorganized the
 	 * remaining code to more closely align with the C/C++ version of the initial
 	 * program.
 	 */
@@ -53,37 +49,16 @@ public class Snow {
 			new HelloTriangleSimple().setup();
 		}
 
-		private float t = 0.0f;
-		private float vertices[] = { -0.5f, -0.5f, -0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
-				-0.5f, -0.5f, -0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f,
-				-0.5f, 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
-				0.5f, -0.5f, -0.5f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
-				-0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
-				-0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.5f,
-				-0.5f, 0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.5f,
-				0.5f, 0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f, 0.5f,
-				-0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, 0.5f,
-				0.5f, 0.5f, 1.0f };
-
-		private float colors[] = { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-				1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-				0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-				0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-				1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-				1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-				0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-				0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-		private int nbrVertices[] = new int [4];
-		private IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
-		private IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(4);
+		private float time = 0.0f;
+		private final int[] nbrVertices = new int [4];
+		private final IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
+		private final IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(4);
 		private Program program;
-		private long start;
-		private PMVMatrix rotationMatrix = new PMVMatrix();
-		private PMVMatrix viewMatrix = new PMVMatrix();
-		private PMVMatrix projectionMatrix = new PMVMatrix();
+		private final PMVMatrix rotationMatrix = new PMVMatrix();
+		private final PMVMatrix viewMatrix = new PMVMatrix();
+		private final PMVMatrix projectionMatrix = new PMVMatrix();
 		private boolean useInstanced = false;
-		private ParticleInterface flakes = new SnowParticle();
+		private final ParticleInterface flakes = new SnowParticle();
 
 		private void setup() {
 
@@ -130,17 +105,11 @@ public class Snow {
 			buildObjects(gl);
 			gl.glEnable(GL_DEPTH_TEST);
 			gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
-			start = System.currentTimeMillis();
 		}
 
 		private void initDebug(GL4 gl) {
 
-			window.getContext().addGLDebugListener(new GLDebugListener() {
-				@Override
-				public void messageSent(GLDebugMessage event) {
-					System.out.println(event);
-				}
-			});
+			window.getContext().addGLDebugListener(System.out::println);
 			/*
 			 * sets up medium and high severity error messages to be printed.
 			 */
@@ -152,7 +121,7 @@ public class Snow {
 		}
 
 		private void buildObjects(GL4 gl) {
-			flakes.init(5000);  // set up for 1000 snowflakes (maximum).
+			flakes.init(5000);  // set up for 5000 snowflakes (maximum).
 			
 			OBJinfo obj = new OBJinfo();
 			obj.readOBJFile("src/cow.obj");
@@ -263,9 +232,9 @@ public class Snow {
 			PMVMatrix translate = new PMVMatrix();
 			gl.glBindVertexArray(vertexArrayName.get(0));
 			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));		
-			float deltax = (float) (3.0 * Math.sin (t * 2 * 3.14159));
+			float deltax = (float) (3.0 * Math.sin (time * 2 * 3.14159));
 			float deltay = 0.0f;
-			float deltaz = (float) Math.cos(t * 2 * 3.14159);
+			float deltaz = (float) Math.cos(time * 2 * 3.14159);
 			translate.glTranslatef(deltax, deltay, deltaz);
 			PMVMatrix trsMatrix = new PMVMatrix();
 			trsMatrix.glLoadIdentity();
@@ -293,7 +262,7 @@ public class Snow {
 			gl.glBindBuffer(GL_ARRAY_BUFFER,  bufferName.get(2));
 			PMVMatrix snowScale = new PMVMatrix();
 			snowScale.glScalef(0.025f, 0.025f, 0.025f);
-			float snowTranslation[] = flakes.getPositions();
+			float[] snowTranslation = flakes.getPositions();
 			
 			PMVMatrix snowTranslate = new PMVMatrix();
 			for (int current = 0; current < flakes.getNumberOfParticles(); current++) {
@@ -309,9 +278,9 @@ public class Snow {
 			}
 			flakes.update(0.033f);
 			flakes.compact();
-			t = t + 0.01f;
-			if (t > 1.0f) {
-				t = t -1.0f;
+			time = time + 0.01f;
+			if (time > 1.0f) {
+				time = time -1.0f;
 			}
 
 		}
@@ -381,9 +350,7 @@ public class Snow {
 		 */
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				new Thread(() -> {
-					window.destroy();
-				}).start();
+				new Thread(() -> window.destroy()).start();
 			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				rotationMatrix.glRotatef(10.0f, 0.0f, 1.0f, 0.0f);
 			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -423,7 +390,7 @@ public class Snow {
 		 */
 		private class Program {
 
-			public int name = 0;
+			public int name;
 
 			public Program(GL4 gl, String root, String vertex, String fragment) {
 
@@ -455,9 +422,7 @@ public class Snow {
 			private int type = 0;
 			private int id = 0;
 			private int severity = 0;
-			private int length = 0;
 			private String message = null;
-			private boolean received = false;
 
 			public GlDebugOutput() {
 			}
@@ -487,6 +452,7 @@ public class Snow {
 				else
 					System.err.println("GlDebugOutput.messageSent(): " + event);
 
+				boolean received = false;
 				if (null != message && message.equals(event.getDbgMsg()) && id == event.getDbgId())
 					received = true;
 				else if (0 <= source && source == event.getDbgSource() && type == event.getDbgType()
@@ -506,7 +472,6 @@ public class Snow {
 	}
 
 	/**
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

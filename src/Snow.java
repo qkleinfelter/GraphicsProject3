@@ -123,68 +123,22 @@ public class Snow {
 		private void buildObjects(GL4 gl) {
 			flakes.init(5000);  // set up for 5000 snowflakes (maximum).
 			
-			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("src/cow.obj");
-
-			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
-			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
-
+			OBJinfo snowflake = new OBJinfo();
+			snowflake.readOBJFile("src/cube.obj");
+			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getVertexList());
+			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getNormalList());
 			System.out.println("vertexBuffer Capacity = "+vertexBuffer.capacity() + "  normalBuffer Capacity = "+normalBuffer.capacity());
-			gl.glGenVertexArrays(3, vertexArrayName);
+
+			gl.glGenVertexArrays(1, vertexArrayName);
 			gl.glBindVertexArray(vertexArrayName.get(0));
 			gl.glGenBuffers(Buffer.MAX, bufferName);
 			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-			gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null,
-					GL_STATIC_DRAW);
-			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-     		gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-			nbrVertices[0] = vertexBuffer.capacity() / 4;
-			int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
-			int vNormal = gl.glGetAttribLocation(program.name, "vNormal");
-			gl.glEnableVertexAttribArray(vPosition);
-			gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
-			if(vNormal != -1 ){
-				gl.glEnableVertexAttribArray(vNormal);
-				gl.glVertexAttribPointer(vNormal, 3, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
-			}
-			
-			OBJinfo cylinder = new OBJinfo();
-			cylinder.readOBJFile("src/cylinder.obj");
-			vertexBuffer = GLBuffers.newDirectFloatBuffer(cylinder.getVertexList());
-			normalBuffer = GLBuffers.newDirectFloatBuffer(cylinder.getNormalList());
-
-			System.out.println("vertexBuffer Capacity = "+vertexBuffer.capacity() + "  normalBuffer Capacity = "+normalBuffer.capacity());
-
-			gl.glBindVertexArray(vertexArrayName.get(1));
-			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(1));
-			gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null,
-					GL_STATIC_DRAW);
-			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-     		gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-			nbrVertices[1] = vertexBuffer.capacity() / 4;
-			vPosition = gl.glGetAttribLocation(program.name, "vPosition");
-			vNormal = gl.glGetAttribLocation(program.name, "vNormal");
-			gl.glEnableVertexAttribArray(vPosition);
-			gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
-			if(vNormal != -1 ){
-				gl.glEnableVertexAttribArray(vNormal);
-				gl.glVertexAttribPointer(vNormal, 3, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
-			}
-			
-			OBJinfo snowflake = new OBJinfo();
-			snowflake.readOBJFile("src/cube.obj");
-			vertexBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getVertexList());
-			normalBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getNormalList());
-			System.out.println("vertexBuffer Capacity = "+vertexBuffer.capacity() + "  normalBuffer Capacity = "+normalBuffer.capacity());
-			
-			gl.glBindVertexArray(vertexArrayName.get(2));
-			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(2));
 			gl.glBufferData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L + normalBuffer.capacity() * 4L, null, GL_STATIC_DRAW);
 			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
 			gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-			nbrVertices[2] = vertexBuffer.capacity() / 4;
-			vPosition = gl.glGetAttribLocation(program.name, "vPosition");
-			vNormal = gl.glGetAttribLocation(program.name, "vNormal");
+			nbrVertices[0] = vertexBuffer.capacity() / 4;
+			int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
+			int vNormal = gl.glGetAttribLocation(program.name, "vNormal");
 			gl.glEnableVertexAttribArray(vPosition);
 			gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
 			if (vNormal != -1) {
@@ -225,41 +179,9 @@ public class Snow {
 			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
 			int normalMatrixLocation = gl.glGetUniformLocation(program.name, "normalMatrix");
 			
-			// set up and draw the cow...
-			
-			PMVMatrix scale = new PMVMatrix();
-			scale.glScalef(1.0f, 1.0f, 1.0f);
-			PMVMatrix translate = new PMVMatrix();
-			gl.glBindVertexArray(vertexArrayName.get(0));
-			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));		
-			float deltax = (float) (3.0 * Math.sin (time * 2 * 3.14159));
-			float deltay = 0.0f;
-			float deltaz = (float) Math.cos(time * 2 * 3.14159);
-			translate.glTranslatef(deltax, deltay, deltaz);
-			PMVMatrix trsMatrix = new PMVMatrix();
-			trsMatrix.glLoadIdentity();
-			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
-			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
-			trsMatrix.glMultMatrixf(translate.glGetMatrixf());
-			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
-			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices[0]);
-			
-			// Draw Cylinder
-			gl.glBindVertexArray(vertexArrayName.get(1));
-			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(1));
-			PMVMatrix cylinderTranslate = new PMVMatrix();
-			cylinderTranslate.glTranslatef(-2.0f, 0.0f, 0.0f);
-			PMVMatrix cylindertrsMatrix = new PMVMatrix();
-			cylindertrsMatrix.glLoadIdentity();
-			cylindertrsMatrix.glMultMatrixf(cylinderTranslate.glGetMatrixf());
-			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, cylindertrsMatrix.glGetMvitMatrixf());
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, cylindertrsMatrix.glGetMatrixf());
-			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices[1]);
-			
 			// draw cows as snow???
-			gl.glBindVertexArray(vertexArrayName.get(2));
-			gl.glBindBuffer(GL_ARRAY_BUFFER,  bufferName.get(2));
+			gl.glBindVertexArray(vertexArrayName.get(0));
+			gl.glBindBuffer(GL_ARRAY_BUFFER,  bufferName.get(0));
 			PMVMatrix snowScale = new PMVMatrix();
 			snowScale.glScalef(0.025f, 0.025f, 0.025f);
 			float[] snowTranslation = flakes.getPositions();
@@ -274,7 +196,7 @@ public class Snow {
 				snowModel.glMultMatrixf(snowScale.glGetMatrixf());
 				gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, snowModel.glGetMatrixf());
 				gl.glUniformMatrix4fv(normalMatrixLocation, 1, false, snowModel.glGetMvitMatrixf());
-				gl.glDrawArrays(GL_TRIANGLES,  0,  nbrVertices[2]);
+				gl.glDrawArrays(GL_TRIANGLES,  0,  nbrVertices[0]);
 			}
 			flakes.update(0.033f);
 			flakes.compact();

@@ -22,11 +22,11 @@ public class SnowParticle implements ParticleInterface {
     public void generate(int maxNewParticles) {
         if (maxNewParticles + numberOfParticles < maxParticles) {
             for (int currentParticle = 0; currentParticle < maxNewParticles; currentParticle++) {
-                positions[(numberOfParticles + currentParticle) * 3] = 0;
-                positions[(numberOfParticles + currentParticle) * 3 + 1] = 0;
-                positions[(numberOfParticles + currentParticle) * 3 + 2] = 0;
+                positions[(numberOfParticles + currentParticle) * 3] = (float) Math.random() * 20 - 7;
+                positions[(numberOfParticles + currentParticle) * 3 + 1] = 13;
+                positions[(numberOfParticles + currentParticle) * 3 + 2] = (float) Math.random() * 20 - 7;
                 double angle = Math.random() * 2 * Math.PI - Math.PI;
-                double initialUpward = Math.random() * 5 + 32;
+                double initialUpward = 0;
 
                 velocities[(numberOfParticles + currentParticle) * 3] = (float) (Math.cos(angle));
                 velocities[(numberOfParticles + currentParticle) * 3 + 1] = (float) initialUpward;

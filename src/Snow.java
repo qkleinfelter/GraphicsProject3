@@ -197,7 +197,7 @@ public class Snow {
 				gl.glUniformMatrix4fv(normalMatrixLocation, 1, false, snowModel.glGetMvitMatrixf());
 				gl.glDrawArrays(GL_TRIANGLES,  0,  nbrVertices[0]);
 			}
-			flakes.update(0.033f);
+			flakes.update(0.00099f);
 			flakes.compact();
 		}
 

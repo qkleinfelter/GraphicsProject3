@@ -49,7 +49,6 @@ public class Snow {
 			new HelloTriangleSimple().setup();
 		}
 
-		private float time = 0.0f;
 		private final int[] nbrVertices = new int [4];
 		private final IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
 		private final IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(4);
@@ -124,10 +123,10 @@ public class Snow {
 			flakes.init(5000);  // set up for 5000 snowflakes (maximum).
 			
 			OBJinfo snowflake = new OBJinfo();
-			snowflake.readOBJFile("src/cube.obj");
+			snowflake.readOBJFile("src/cow.obj");
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getNormalList());
-			System.out.println("vertexBuffer Capacity = "+vertexBuffer.capacity() + "  normalBuffer Capacity = "+normalBuffer.capacity());
+			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
 
 			gl.glGenVertexArrays(1, vertexArrayName);
 			gl.glBindVertexArray(vertexArrayName.get(0));
@@ -179,11 +178,11 @@ public class Snow {
 			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
 			int normalMatrixLocation = gl.glGetUniformLocation(program.name, "normalMatrix");
 			
-			// draw cows as snow???
+			// draw cows as snow
 			gl.glBindVertexArray(vertexArrayName.get(0));
 			gl.glBindBuffer(GL_ARRAY_BUFFER,  bufferName.get(0));
 			PMVMatrix snowScale = new PMVMatrix();
-			snowScale.glScalef(0.025f, 0.025f, 0.025f);
+			snowScale.glScalef(0.3f, 0.3f, 0.3f);
 			float[] snowTranslation = flakes.getPositions();
 			
 			PMVMatrix snowTranslate = new PMVMatrix();
@@ -200,11 +199,6 @@ public class Snow {
 			}
 			flakes.update(0.033f);
 			flakes.compact();
-			time = time + 0.01f;
-			if (time > 1.0f) {
-				time = time -1.0f;
-			}
-
 		}
 
 		/**

@@ -123,7 +123,7 @@ public class Snow {
 			flakes.init(5000);  // set up for 5000 snowflakes (maximum).
 			
 			OBJinfo snowflake = new OBJinfo();
-			snowflake.readOBJFile("src/cow.obj");
+			snowflake.readOBJFile("src/elephantTriangles.obj");
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getNormalList());
 			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());

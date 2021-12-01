@@ -18,6 +18,16 @@ import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_HIGH;
 import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_MEDIUM;
 import static com.jogamp.opengl.GL2ES3.*;
 
+
+/**
+ * @author Quinn Kleinfelter
+ * Modified the existing to implement the SnowParticle class, based on Dr. Heuring's FountainParticle.cpp.
+ * The SnowParticle code starts at the top of the screen with randomly generated x and z values,
+ * and then falls uniformly on each timestep. The objects also start with no initial velocity, whereas the founatin
+ * particles started with an upward velocity. Currently the SnowParticles are elephants, imported from the obj file
+ * located at src/elehantTriangles.obj, though this can be easily modified.
+ */
+
 /**
  * @author Jerry Heuring
  *
@@ -66,7 +76,7 @@ public class Snow {
 
 			window = GLWindow.create(glCapabilities);
 
-			window.setTitle("Moving Objects Demo");
+			window.setTitle("Snow");
 			window.setSize(600, 600);
 
 			window.setContextCreationFlags(GLContext.CTX_OPTION_DEBUG);
@@ -123,6 +133,7 @@ public class Snow {
 			flakes.init(5000);  // set up for 5000 snowflakes (maximum).
 			
 			OBJinfo snowflake = new OBJinfo();
+			// NOTE: CHANGE THIS LINE IF YOU WANT TO USE A DIFFERENT OBJECT AS THE SNOWFLAKES
 			snowflake.readOBJFile("src/elephantTriangles.obj");
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(snowflake.getNormalList());
@@ -182,6 +193,7 @@ public class Snow {
 			gl.glBindVertexArray(vertexArrayName.get(0));
 			gl.glBindBuffer(GL_ARRAY_BUFFER,  bufferName.get(0));
 			PMVMatrix snowScale = new PMVMatrix();
+			// NOTE: IF YOU WANT TO ADJUST TEH SCALING, USE THIS LINE
 			snowScale.glScalef(0.3f, 0.3f, 0.3f);
 			float[] snowTranslation = flakes.getPositions();
 			
@@ -197,6 +209,7 @@ public class Snow {
 				gl.glUniformMatrix4fv(normalMatrixLocation, 1, false, snowModel.glGetMvitMatrixf());
 				gl.glDrawArrays(GL_TRIANGLES,  0,  nbrVertices[0]);
 			}
+			// NOTE: IF YOU WANT TO ADJUST THE SPEED OF THE SNOW FALLING, ADJUST THIS LINE
 			flakes.update(0.0099f);
 			flakes.compact();
 		}
